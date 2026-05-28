@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+storage/*.key
+public/storage
+storage/framework/views/*.php
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/logs/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Cache
+*.cache
