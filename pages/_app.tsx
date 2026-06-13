@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from '@/store';
 import AppLoading from '@/components/AppLoading';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function App({ Component, pageProps }: AppProps) {
   const { theme, language } = useAppStore();
@@ -49,6 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <AppLoading show={routeLoading || initialLoad} />
+      <ErrorBoundary>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={router.pathname}
@@ -61,6 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </motion.div>
       </AnimatePresence>
+      </ErrorBoundary>
       <Toaster position={language === 'ar' ? 'top-left' : 'top-right'} />
     </>
   );

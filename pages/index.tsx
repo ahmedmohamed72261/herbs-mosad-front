@@ -60,11 +60,12 @@ const fallbackProducts: Product[] = [
     category: { name_en: 'Extracts', name_ar: 'Extracts' },
   },
 ];
-
-const heroImage =
-  'https://images.unsplash.com/photo-1515586000433-45406d8e6662?auto=format&fit=crop&q=85&w=1400';
-const labImage =
-  'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=85&w=1100';
+const heroImage = '/images/hero-section.jpg';
+// const heroImage =
+//   'https://images.unsplash.com/photo-1515586000433-45406d8e6662?auto=format&fit=crop&q=85&w=1400';
+// const labImage =
+//   'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=85&w=1100';
+  const labImage ='/images/lab.jpg';
 
 const Home = () => {
   const { language } = useAppStore();

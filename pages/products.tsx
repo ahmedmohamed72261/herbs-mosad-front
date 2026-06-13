@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { FadeIn, StaggerGrid, StaggerItem } from '@/components/Motion';
 import { PageLoader } from '@/components/Loading';
+import ProductCard from '@/components/ProductCard';
 import { useAppStore } from '@/store';
 import { translations } from '@/lib/translations';
-import api, { getAssetUrl } from '@/lib/api';
+import api from '@/lib/api';
+import { FiPackage, FiRefreshCw } from 'react-icons/fi';
 
 interface Product {
-  id: number;
+  id: number | string;
   name_en: string;
   name_ar: string;
   short_description_en: string;
@@ -16,14 +18,14 @@ interface Product {
   description_ar: string;
   image: string | null;
   category: {
-    id: number;
+    id: number | string;
     name_en: string;
     name_ar: string;
   };
 }
 
 interface Category {
-  id: number;
+  id: number | string;
   name_en: string;
   name_ar: string;
   slug: string;
@@ -37,66 +39,35 @@ const Products = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchCategories();
     fetchProducts();
   }, [selectedCategory]);
 
+  const normalizeItem = (item: any) => item ? { ...item, id: item.id ?? item._id } : null;
+
   const fetchCategories = async () => {
     try {
       const response = await api.get('/categories');
-      setCategories(response.data || []);
+      const data = response.data?.data || response.data || [];
+      setCategories(Array.isArray(data) ? data.map(normalizeItem).filter(Boolean) : []);
     } catch (error) {
-      setCategories([
-        { id: 1, name_en: 'Herbs', name_ar: 'أعشاب', slug: 'herbs' },
-        { id: 2, name_en: 'Spices', name_ar: 'بهارات', slug: 'spices' },
-        { id: 3, name_en: 'Seeds', name_ar: 'بذور', slug: 'seeds' }
-      ]);
+      setCategories([]);
     }
   };
 
   const fetchProducts = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const params = selectedCategory ? { category_id: selectedCategory } : {};
       const response = await api.get('/products', { params });
-      setProducts(response.data.data || []);
+      const data = response.data?.data || response.data || [];
+      setProducts(Array.isArray(data) ? data.map(normalizeItem).filter(Boolean) : []);
     } catch (error) {
-      setProducts([
-        {
-          id: 1,
-          name_en: 'Dried Mint',
-          name_ar: 'نعناع مجفف',
-          short_description_en: 'Premium dried mint',
-          short_description_ar: 'نعناع مجفف ممتاز',
-          description_en: 'High quality dried mint leaves',
-          description_ar: 'أوراق نعناع مجففة عالية الجودة',
-          image: null,
-          category: { id: 1, name_en: 'Herbs', name_ar: 'أعشاب' }
-        },
-        {
-          id: 2,
-          name_en: 'Cinnamon',
-          name_ar: 'قرفة',
-          short_description_en: 'Fresh cinnamon',
-          short_description_ar: 'قرفة طازجة',
-          description_en: 'Organic cinnamon sticks',
-          description_ar: 'أعواد قرفة عضوية',
-          image: null,
-          category: { id: 2, name_en: 'Spices', name_ar: 'بهارات' }
-        },
-        {
-          id: 3,
-          name_en: 'Black Seeds',
-          name_ar: 'حبة البركة',
-          short_description_en: 'Natural black seeds',
-          short_description_ar: 'حبة بركة طبيعية',
-          description_en: 'Premium black seeds',
-          description_ar: 'حبة بركة ممتازة',
-          image: null,
-          category: { id: 3, name_en: 'Seeds', name_ar: 'بذور' }
-        }
-      ]);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -105,104 +76,106 @@ const Products = () => {
   return (
     <Layout title={t.products.title}>
       {/* Hero Section */}
-      <section className="bg-herba-dark pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #2d6a4f 0%, transparent 50%)' }}></div>
-        <FadeIn className="container mx-auto px-6 relative z-10 text-center text-white">
-          <div className="inline-flex items-center space-x-2 bg-white/10 rounded-full px-4 py-1.5 mb-6 text-sm text-green-300 font-medium border border-white/10">
-            <span>🌿</span>
-            <span>{page.heroBadge}</span>
-          </div>
-          <h1 className="text-4xl lg:text-6xl font-bold mb-6">
+      <section className="relative overflow-hidden bg-[#0e2916] pt-40 pb-28 lg:pt-56 lg:pb-40">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(214,167,87,0.18),transparent_30rem),radial-gradient(circle_at_80%_70%,rgba(45,106,79,0.35),transparent_28rem)]" />
+        <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+        <FadeIn className="container mx-auto px-6 relative z-10 text-center">
+          <span className="eyebrow mb-6 inline-flex">🌿 {page.heroBadge}</span>
+          <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] tracking-tight">
             {t.products.title}
           </h1>
-          <p className="text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-white/60">
             {page.heroDescription}
           </p>
         </FadeIn>
       </section>
 
-      <section className="py-20 bg-herba-light">
-        <FadeIn className="container mx-auto px-6">
-          <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <h3 className="text-xl font-bold text-herba-dark">
-              {t.products.filterByCategory}
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all ${
-                  !selectedCategory
-                    ? 'bg-herba-green text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-                }`}
-              >
-                {t.products.allCategories}
-              </button>
-              {categories.map((category) => (
+      {/* Products Grid */}
+      <section className="py-20 lg:py-32">
+        <div className="container mx-auto px-6">
+          <FadeIn>
+            <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <h3 className="text-sm font-black text-[#566359] uppercase tracking-widest">
+                {t.products.filterByCategory}
+              </h3>
+              <div className="flex flex-wrap gap-3">
                 <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id.toString())}
-                  className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all ${
-                    selectedCategory === category.id.toString()
-                      ? 'bg-herba-green text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  onClick={() => setSelectedCategory(null)}
+                  className={`px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
+                    !selectedCategory
+                      ? 'bg-[#2d6a4f] text-white shadow-lg shadow-[#2d6a4f]/25'
+                      : 'bg-[#102116]/5 text-[#566359] hover:bg-[#102116]/10'
                   }`}
                 >
-                  {language === 'en' ? category.name_en : category.name_ar}
+                  {t.products.allCategories}
                 </button>
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id.toString())}
+                    className={`px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
+                      selectedCategory === category.id.toString()
+                        ? 'bg-[#2d6a4f] text-white shadow-lg shadow-[#2d6a4f]/25'
+                        : 'bg-[#102116]/5 text-[#566359] hover:bg-[#102116]/10'
+                    }`}
+                  >
+                    {language === 'en' ? category.name_en : category.name_ar}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="glass-panel rounded-[1.75rem] overflow-hidden">
+                  <div className="skeleton-block h-56 rounded-none" />
+                  <div className="p-6 space-y-4">
+                    <div className="skeleton-line h-3 w-1/3" />
+                    <div className="skeleton-line h-5 w-3/4" />
+                    <div className="skeleton-line h-3 w-full" />
+                    <div className="skeleton-line h-3 w-2/3" />
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        </FadeIn>
-
-          {loading ? (
-            <PageLoader className="min-h-[400px]" />
+          ) : error ? (
+            <div className="glass-panel rounded-[2rem] max-w-lg mx-auto text-center p-12">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#2d6a4f]/10 flex items-center justify-center">
+                <FiPackage className="w-7 h-7 text-[#2d6a4f]" />
+              </div>
+              <p className="text-xl font-black text-[#102116] mb-2">{t.common.error}</p>
+              <p className="text-[#566359] mb-8 leading-relaxed">
+                {language === 'en' ? 'Unable to load products. Please try again.' : 'تعذر تحميل المنتجات. يرجى المحاولة مرة أخرى.'}
+              </p>
+              <button onClick={fetchProducts} className="btn-primary inline-flex">
+                <FiRefreshCw className="w-4 h-4" />
+                {language === 'en' ? 'Retry' : 'إعادة المحاولة'}
+              </button>
+            </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-gray-100">
-              <span className="text-6xl mb-4 block opacity-50">🌿</span>
-              <p className="text-xl font-bold text-gray-500">{t.common.noData}</p>
+            <div className="glass-panel rounded-[2rem] max-w-lg mx-auto text-center p-12">
+              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#102116]/5 flex items-center justify-center">
+                <FiPackage className="w-7 h-7 text-[#566359]" />
+              </div>
+              <p className="text-xl font-black text-[#102116]">{t.common.noData}</p>
             </div>
           ) : (
             <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
                 <StaggerItem key={product.id}>
-                  <div className="bg-white rounded-3xl p-6 text-left group hover:shadow-xl transition-all border border-gray-100 hover:border-transparent relative overflow-hidden">
-                    <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h3 className="font-bold text-herba-dark text-xl">{language === 'en' ? product.name_en : product.name_ar}</h3>
-                        <span className="text-xs text-gray-400 uppercase tracking-wider">{language === 'en' ? product.category.name_en : product.category.name_ar}</span>
-                      </div>
-                    </div>
-                    <div className="h-64 bg-gray-100 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative group-hover:scale-105 transition-transform duration-500">
-                      {product.image ? (
-                        <img
-                          src={getAssetUrl(product.image)}
-                          alt={language === 'en' ? product.name_en : product.name_ar}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#1a3d28] to-[#0a1d0f] flex items-center justify-center text-white flex-col">
-                          <span className="text-4xl mb-2">🌿</span>
-                          <span className="text-sm opacity-50 text-center px-4">{language === 'en' ? product.name_en : product.name_ar}</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                      {language === 'en' ? product.short_description_en : product.short_description_ar}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-xs font-bold text-herba-dark bg-herba-light border border-gray-100 px-3 py-1.5 rounded-full">
-                        {page.tags[0]}
-                      </span>
-                      <span className="text-xs font-bold text-herba-dark bg-herba-light border border-gray-100 px-3 py-1.5 rounded-full">
-                        {page.tags[1]}
-                      </span>
-                    </div>
-                  </div>
+                  <ProductCard
+                    id={product.id}
+                    name={language === 'en' ? product.name_en : product.name_ar}
+                    category={language === 'en' ? product.category.name_en : product.category.name_ar}
+                    description={language === 'en' ? product.short_description_en : product.short_description_ar}
+                    image={product.image}
+                  />
                 </StaggerItem>
               ))}
             </StaggerGrid>
           )}
+        </div>
       </section>
     </Layout>
   );

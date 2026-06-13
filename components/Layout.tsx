@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { PageTransition } from './Motion';
 import FloatingWhatsApp from './FloatingWhatsApp';
 import GoToTop from './GoToTop';
-import ChatAgent from './ChatAgent';
+// import ChatAgent from './ChatAgent';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -32,7 +32,7 @@ const Layout = ({ children, title, description }: LayoutProps) => {
         <Footer />
         <FloatingWhatsApp />
         <GoToTop />
-        <ChatAgent />
+        {/* <ChatAgent /> */}
       </div>
     </>
   );

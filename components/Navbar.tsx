@@ -23,8 +23,9 @@ const Navbar = () => {
     { href: '/', label: t.nav.home },
     { href: '/about', label: t.nav.about },
     { href: '/products', label: t.nav.products, dropdown: true },
-    { href: '/team', label: t.nav.team },
+    { href: '/certificates', label: t.nav.certificates},
     { href: '/catalog', label: t.nav.catalog },
+    { href: '/team', label: t.nav.team },
     { href: '/contact', label: t.nav.contact },
   ];
 

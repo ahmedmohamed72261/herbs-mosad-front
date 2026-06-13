@@ -14,6 +14,7 @@ const About = () => {
     <Layout title={t.about.title}>
       {/* Hero Section */}
       <section className="bg-herba-dark pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
+        <img src="/images/breadcrumb.jpg" alt="About us" className="absolute inset-0 h-full w-full object-cover opacity-40" />
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #2d6a4f 0%, transparent 50%)' }}></div>
         <FadeIn className="container mx-auto px-6 relative z-10 text-center text-white">
           <div className="inline-flex items-center space-x-2 bg-white/10 rounded-full px-4 py-1.5 mb-6 text-sm text-green-300 font-medium border border-white/10">
