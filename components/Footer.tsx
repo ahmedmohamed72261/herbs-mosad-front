@@ -8,23 +8,21 @@ const Footer = () => {
   const { language } = useAppStore();
   const t = translations[language];
   const footerText = {
-    eyebrow: language === 'en' ? 'Stay close to the harvest' : 'ابق قريبًا من الحصاد',
+    eyebrow: language === 'en' ? 'Stay Updated on Global Botanical Trade' : 'ابق على اطلاع دائم بالتجارة النباتية العالمية',
     headline:
       language === 'en'
         ? 'Premium botanical updates, sourcing notes, and product releases.'
         : 'تحديثات نباتية فاخرة وملاحظات توريد وإصدارات منتجات جديدة.',
-    emailPlaceholder: language === 'en' ? 'Your email address' : 'بريدك الإلكتروني',
+    emailPlaceholder: language === 'en' ? 'Your corporate email address' : 'البريد الإلكتروني للشركة',
     subscribe: language === 'en' ? 'Subscribe' : 'اشترك',
     intro:
       language === 'en'
-        ? 'Exporting premium herbs, spices, seeds, and botanical ingredients with careful sourcing, clean handling, and refined presentation.'
-        : 'نصدر أعشابًا وتوابل وبذورًا ومكونات نباتية فاخرة بعناية في التوريد، ونظافة في التداول، وجودة في العرض.',
-    products: language === 'en' ? 'Products' : t.nav.products,
+        ? 'Exporting premium herbs, spices, seeds, and botanical ingredients with careful sourcing, strict quality control, and professional international handling.'
+        : 'نصدر أعشابًا وتوابل وبذورًا ومكونات نباتية فاخرة مع توريد دقيق ورقابة صارمة على الجودة وتعامل دولي احترافي.',
+    tagline: language === 'en' ? 'From Egyptian farms to global markets.' : 'من المزارع المصرية إلى الأسواق العالمية.',
+    products: language === 'en' ? 'Categories' : 'الفئات',
     company: language === 'en' ? 'Company' : 'الشركة',
     contact: language === 'en' ? 'Contact' : t.nav.contact,
-    premiumHerbs: language === 'en' ? 'Premium Herbs' : t.nav.herbs,
-    signatureSpices: language === 'en' ? 'Signature Spices' : t.nav.spices,
-    naturalSeeds: language === 'en' ? 'Natural Seeds' : t.nav.seeds,
     rights: language === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.',
     terms: language === 'en' ? 'Terms' : 'الشروط',
     privacy: language === 'en' ? 'Privacy' : 'الخصوصية',
@@ -35,14 +33,17 @@ const Footer = () => {
     { href: '/', label: t.nav.home },
     { href: '/about', label: t.nav.about },
     { href: '/products', label: t.nav.products },
+    { href: '/certificates', label: t.nav.certificates },
+    { href: '/catalog', label: t.nav.catalog },
     { href: '/team', label: t.nav.team },
   ];
 
   const productLinks = [
-    { href: '/products?category=1', label: footerText.premiumHerbs },
-    { href: '/products?category=2', label: footerText.signatureSpices },
-    { href: '/products?category=3', label: footerText.naturalSeeds },
-    { href: '/catalog', label: t.nav.catalog },
+    { href: '/products?category=1', label: t.nav.herbs },
+    { href: '/products?category=2', label: t.nav.spices },
+    { href: '/products?category=3', label: t.nav.seeds },
+    { href: '/products?category=4', label: t.nav.driedFlowers },
+    { href: '/products?category=5', label: t.nav.herbalTeas },
   ];
 
   return (
@@ -79,12 +80,21 @@ const Footer = () => {
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Link href="/" className="mb-6 inline-flex items-center gap-3 rounded-full bg-white/10 py-1.5 pl-2 pr-4 ring-1 ring-white/15">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#d6a757] text-sm font-black text-[#102116]">H</span>
-              <span className="text-lg font-black tracking-[0.22em]">HERBA</span>
+            <Link href="/" className="mb-6 inline-flex items-center gap-3 rounded-full bg-white/10 py-1.5 pl-2 pr-5 text-white ring-1 ring-white/15 transition duration-300 hover:bg-white/20 hover:ring-white/30">
+              <div className="relative grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-[#d6a757] to-[#b38842] shadow-[0_0_15px_rgba(214,167,87,0.4)]">
+                <span className="text-sm font-black text-[#102116] tracking-tighter">OH</span>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#102116] bg-[#2d6a4f]"></div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="text-[15px] font-black tracking-[0.18em] leading-none text-white">ORGANIC HERBS</span>
+                <span className="text-[9px] font-bold tracking-[0.3em] leading-none text-[#d6a757] uppercase mt-0.5">Company</span>
+              </div>
             </Link>
-            <p className="mb-6 max-w-sm text-sm leading-7 text-white/60">
+            <p className="mb-4 max-w-sm text-sm leading-7 text-white/60">
               {footerText.intro}
+            </p>
+            <p className="mb-6 max-w-sm text-sm font-bold text-[#d6a757]">
+              {footerText.tagline}
             </p>
             <div className="flex gap-3">
               {[FiFacebook, FiTwitter, FiInstagram, FiLinkedin].map((Icon, index) => (
@@ -126,22 +136,22 @@ const Footer = () => {
             <ul className="space-y-5 text-sm text-white/70">
               <li className="flex gap-3">
                 <FiMapPin className="mt-1 h-5 w-5 shrink-0 text-[#d6a757]" />
-                <span>123 Nature Ave, Green Park, CA 90210</span>
+                <span>Industrial Zone, Cairo, Egypt</span>
               </li>
               <li className="flex gap-3">
                 <FiPhone className="h-5 w-5 shrink-0 text-[#d6a757]" />
-                <span>+123 456 7890</span>
+                <span>+20 100 000 0000</span>
               </li>
               <li className="flex gap-3">
                 <FiMail className="h-5 w-5 shrink-0 text-[#d6a757]" />
-                <span>info@herba.com</span>
+                <span>export@organicherbsco.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs text-white/50 md:flex-row md:items-center md:justify-between">
-          <p>&copy; 2026 Herba Export Company. {footerText.rights}</p>
+          <p>&copy; 2026 Organic Herbs Co. {footerText.rights}</p>
           <div className="flex gap-5">
             <Link href="#" className="transition hover:text-white">{footerText.terms}</Link>
             <Link href="#" className="transition hover:text-white">{footerText.privacy}</Link>

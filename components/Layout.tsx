@@ -13,13 +13,13 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, title, description }: LayoutProps) => {
-  const defaultTitle = 'Herba - Premium Quality Herbs & Spices';
-  const defaultDescription = 'Exporting the finest herbs, spices, and seeds worldwide. Premium quality products for international markets.';
+  const defaultTitle = 'Organic Herbs Co — Premium Egyptian Herbs, Spices & Seeds Exporter';
+  const defaultDescription = 'Leading Egyptian exporter of premium herbs, spices, seeds, dried flowers & botanical raw materials. HACCP certified. Serving 50+ countries worldwide.';
 
   return (
     <>
       <Head>
-        <title>{title ? `${title} | Herba` : defaultTitle}</title>
+        <title>{title ? `${title} | Organic Herbs Co` : defaultTitle}</title>
         <meta name="description" content={description || defaultDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

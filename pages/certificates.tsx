@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { FadeIn, StaggerGrid, StaggerItem } from '@/components/Motion';
+import { FadeIn, StaggerGrid, StaggerItem, motion, AnimatePresence } from '@/components/Motion';
 import { useAppStore } from '@/store';
 import { translations } from '@/lib/translations';
 import api, { getAssetUrl } from '@/lib/api';
-import { FiAward, FiRefreshCw } from 'react-icons/fi';
+import { FiAward, FiRefreshCw, FiX, FiExternalLink, FiCalendar } from 'react-icons/fi';
 
 interface Certificate {
   id: number | string;
@@ -22,12 +22,22 @@ const Certificates = () => {
   const t = translations[language];
   const page = t.certificatesPage;
   const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [selected, setSelected] = useState<Certificate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchCertificates();
   }, []);
+
+  useEffect(() => {
+    if (selected) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [selected]);
 
   const fetchCertificates = async () => {
     setLoading(true);
@@ -41,6 +51,15 @@ const Certificates = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    try {
+      return new Date(dateStr).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    } catch { return dateStr; }
   };
 
   return (
@@ -101,51 +120,155 @@ const Certificates = () => {
             <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {certificates.map((cert) => (
                 <StaggerItem key={cert.id}>
-                  <div className="glass-panel rounded-[1.75rem] overflow-hidden group transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_80px_rgba(16,33,22,0.18)]">
-                    <div className="h-64 bg-[#e8ede6] flex items-center justify-center relative overflow-hidden">
-                      {cert.image ? (
-                        <img
-                          src={getAssetUrl(cert.image)}
-                          alt={language === 'en' ? cert.title_en : cert.title_ar}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-[radial-gradient(circle_at_50%_30%,rgba(214,167,87,0.18),transparent_14rem),linear-gradient(145deg,#dce4d4,#c4d0bc)] flex items-center justify-center">
-                          <div className="text-center">
-                            <FiAward className="w-20 h-20 text-[#d6a757]/60 mx-auto mb-2" />
-                            <span className="text-sm font-bold text-[#102116]/40 uppercase tracking-wider">
-                              {language === 'en' ? cert.title_en : cert.title_ar}
-                            </span>
+                  <button
+                    onClick={() => setSelected(cert)}
+                    className="w-full text-left group"
+                  >
+                    <div className="glass-panel rounded-[1.75rem] overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_80px_rgba(16,33,22,0.18)]">
+                      <div className="h-64 bg-[#e8ede6] flex items-center justify-center relative overflow-hidden">
+                        {cert.image ? (
+                          <img
+                            src={getAssetUrl(cert.image)}
+                            alt={language === 'en' ? cert.title_en : cert.title_ar}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-[radial-gradient(circle_at_50%_30%,rgba(214,167,87,0.18),transparent_14rem),linear-gradient(145deg,#dce4d4,#c4d0bc)] flex items-center justify-center">
+                            <div className="text-center">
+                              <FiAward className="w-20 h-20 text-[#d6a757]/60 mx-auto mb-2" />
+                              <span className="text-sm font-bold text-[#102116]/40 uppercase tracking-wider">
+                                {language === 'en' ? cert.title_en : cert.title_ar}
+                              </span>
+                            </div>
                           </div>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-[#d6a757] to-transparent opacity-60" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 flex items-center justify-center">
+                          <span className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/90 text-[#102116] text-sm font-black shadow-xl">
+                            <FiExternalLink className="w-4 h-4" />
+                            {language === 'en' ? 'View Certificate' : 'عرض الشهادة'}
+                          </span>
                         </div>
-                      )}
-                      {/* Gold accent bar */}
-                      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-[#d6a757] to-transparent opacity-60" />
-                    </div>
-                    <div className="p-8">
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <h3 className="text-2xl font-black text-[#102116]">
-                          {language === 'en' ? cert.title_en : cert.title_ar}
-                        </h3>
-                        <FiAward className="w-7 h-7 text-[#d6a757] shrink-0" />
                       </div>
-                      {cert.issuer && (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#d6a757] bg-[#d6a757]/10 px-3.5 py-1.5 rounded-full uppercase tracking-widest mb-4">
-                          <FiAward className="w-3.5 h-3.5" />
-                          {cert.issuer}
-                        </span>
-                      )}
-                      <p className="text-[#566359] leading-relaxed mt-4">
-                        {language === 'en' ? cert.description_en : cert.description_ar}
-                      </p>
+                      <div className="p-8">
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                          <h3 className="text-2xl font-black text-[#102116]">
+                            {language === 'en' ? cert.title_en : cert.title_ar}
+                          </h3>
+                          <FiAward className="w-7 h-7 text-[#d6a757] shrink-0" />
+                        </div>
+                        {cert.issuer && (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#d6a757] bg-[#d6a757]/10 px-3.5 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                            <FiAward className="w-3.5 h-3.5" />
+                            {cert.issuer}
+                          </span>
+                        )}
+                        <p className="text-[#566359] leading-relaxed mt-4 line-clamp-2">
+                          {language === 'en' ? cert.description_en : cert.description_ar}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </button>
                 </StaggerItem>
               ))}
             </StaggerGrid>
           )}
         </div>
       </section>
+
+      {/* Certificate Preview Dialog */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setSelected(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto glass-panel rounded-[2rem] shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md text-[#102116] flex items-center justify-center hover:bg-white transition-all shadow-lg"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+
+              <div className="grid md:grid-cols-[1fr_1.2fr]">
+                {/* Image Side */}
+                <div className="relative min-h-[280px] md:min-h-full bg-[#e8ede6] overflow-hidden">
+                  {selected.image ? (
+                    <img
+                      src={getAssetUrl(selected.image)}
+                      alt={language === 'en' ? selected.title_en : selected.title_ar}
+                      className="w-full h-full absolute inset-0 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(214,167,87,0.25),transparent_16rem),linear-gradient(145deg,#dce4d4,#c4d0bc)] flex items-center justify-center">
+                      <FiAward className="w-24 h-24 text-[#d6a757]/40" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent md:bg-gradient-to-r md:from-black/30 md:via-transparent md:to-transparent" />
+                </div>
+
+                {/* Content Side */}
+                <div className="p-8 md:p-10 flex flex-col">
+                  <div className="flex-1">
+                    <h2 className="text-3xl md:text-4xl font-black text-[#102116] leading-tight mb-4">
+                      {language === 'en' ? selected.title_en : selected.title_ar}
+                    </h2>
+
+                    <div className="flex flex-wrap gap-3 mb-6">
+                      {selected.issuer && (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#2d6a4f] bg-[#2d6a4f]/10 px-3.5 py-2 rounded-full uppercase tracking-widest">
+                          <FiAward className="w-3.5 h-3.5" />
+                          {selected.issuer}
+                        </span>
+                      )}
+                      {selected.issued_date && (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#566359] bg-[#102116]/5 px-3.5 py-2 rounded-full">
+                          <FiCalendar className="w-3.5 h-3.5" />
+                          {formatDate(selected.issued_date)}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="prose max-w-none">
+                      <p className="text-[#566359] leading-relaxed text-base md:text-lg">
+                        {language === 'en' ? selected.description_en : selected.description_ar}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-6 border-t border-[#102116]/8 flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#566359] uppercase tracking-wider">
+                      {language === 'en' ? 'Quality Certified' : 'شهادة جودة'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#d6a757]">
+                      <FiAward className="w-4 h-4" />
+                      ORGANIC HERBS CO
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 };

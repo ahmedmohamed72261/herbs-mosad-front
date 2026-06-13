@@ -2,6 +2,7 @@ import { FC } from 'react';
 import Link from 'next/link';
 import { FiArrowRight } from 'react-icons/fi';
 import { getAssetUrl } from '@/lib/api';
+import { useAppStore } from '@/store';
 
 interface ProductCardProps {
   id: number | string;
@@ -20,6 +21,9 @@ const ProductCard: FC<ProductCardProps> = ({
   image,
   isFeatured = false,
 }) => {
+  const { language } = useAppStore();
+  const viewDetailsLabel = language === 'en' ? 'View Details' : 'عرض التفاصيل';
+
   return (
     <Link href={`/products/${id}`}>
       <article className="group relative h-full cursor-pointer">
@@ -29,7 +33,7 @@ const ProductCard: FC<ProductCardProps> = ({
             {isFeatured && (
               <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-1.5 bg-[#d6a757] text-[#102116] px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-lg">
                 <span>★</span>
-                <span>Featured</span>
+                <span>{language === 'en' ? 'Featured' : 'مميز'}</span>
               </div>
             )}
 
@@ -51,7 +55,7 @@ const ProductCard: FC<ProductCardProps> = ({
             {/* Hover Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#102116]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
               <span className="inline-flex items-center gap-2 text-sm font-black text-white">
-                View details <FiArrowRight className="w-4 h-4" />
+                {viewDetailsLabel} <FiArrowRight className="w-4 h-4" />
               </span>
             </div>
           </div>
@@ -71,7 +75,7 @@ const ProductCard: FC<ProductCardProps> = ({
             </div>
 
             <div className="flex items-center justify-between pt-4 mt-4 border-t border-[#102116]/8">
-              <span className="text-xs font-bold text-[#2d6a4f] uppercase tracking-wider">Learn more</span>
+              <span className="text-xs font-bold text-[#2d6a4f] uppercase tracking-wider">{viewDetailsLabel}</span>
               <div className="w-8 h-8 rounded-full bg-[#2d6a4f]/10 group-hover:bg-[#2d6a4f] text-[#2d6a4f] group-hover:text-white flex items-center justify-center transition-all duration-300 group-hover:translate-x-1.5">
                 <FiArrowRight className="w-4 h-4" />
               </div>

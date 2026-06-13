@@ -260,7 +260,7 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
               {/* Action Button */}
               <button className="w-full py-4 px-6 bg-herba-green hover:bg-herba-dark text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                 <FiPackage className="w-5 h-5" />
-                <span>{language === 'en' ? 'Contact for Order' : 'تواصل للطلب'}</span>
+                <span>{language === 'en' ? 'Request Quote' : 'طلب عرض سعر'}</span>
               </button>
             </FadeIn>
           </div>

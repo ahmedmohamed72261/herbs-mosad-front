@@ -33,6 +33,8 @@ const Navbar = () => {
     { href: '/products?category=1', label: t.nav.herbs },
     { href: '/products?category=2', label: t.nav.spices },
     { href: '/products?category=3', label: t.nav.seeds },
+    { href: '/products?category=4', label: t.nav.driedFlowers },
+    { href: '/products?category=5', label: t.nav.herbalTeas },
   ];
 
   const shopNow = t.homePage.shopNow.replace(' ->', '').replace('->', '');
@@ -51,11 +53,15 @@ const Navbar = () => {
             : 'border-white/25 bg-[#102116]/35'
         }`}
       >
-        <Link href="/" className="group flex items-center gap-3 rounded-full bg-white/10 py-1.5 pl-2 pr-4 text-white ring-1 ring-white/20 transition hover:bg-white/20">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-[#d6a757] text-sm font-black text-[#102116] shadow-lg shadow-[#d6a757]/25">
-            H
-          </span>
-          <span className="text-lg font-black tracking-[0.22em]">HERBA</span>
+        <Link href="/" className="group flex items-center gap-3 rounded-full bg-white/10 py-1.5 pl-2 pr-5 text-white ring-1 ring-white/20 transition duration-300 hover:bg-white/20 hover:ring-white/40">
+          <div className="relative grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-[#d6a757] to-[#b38842] shadow-[0_0_15px_rgba(214,167,87,0.4)]">
+            <span className="text-sm font-black text-[#102116] tracking-tighter">OH</span>
+            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#102116] bg-[#2d6a4f]"></div>
+          </div>
+          <div className="flex flex-col justify-center">
+            <span className="text-[15px] font-black tracking-[0.18em] leading-none text-white">ORGANIC HERBS</span>
+            <span className="text-[9px] font-bold tracking-[0.3em] leading-none text-[#d6a757] uppercase mt-0.5">Company</span>
+          </div>
         </Link>
 
         <div className={`hidden items-center space-x-3 lg:flex ${language === 'ar' ? 'space-x-reverse' : ''}`}>
@@ -155,7 +161,25 @@ const Navbar = () => {
                 )}
               </div>
             ))}
-            <div className="pt-4">
+            <div className={`flex items-center gap-2 pt-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+              <button
+                onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+                className="flex-1 rounded-2xl border border-white/20 px-4 py-3 text-center text-sm font-semibold text-white/90 transition hover:bg-white/10"
+                title="Change language"
+              >
+                <FiGlobe className="inline h-5 w-5 mr-2 align-middle" />
+                {language === 'en' ? 'AR' : 'EN'}
+              </button>
+              <button
+                onClick={toggleTheme}
+                className="flex-1 rounded-2xl border border-white/20 px-4 py-3 text-center text-sm font-semibold text-white/90 transition hover:bg-white/10"
+                title="Toggle theme"
+              >
+                {theme === 'light' ? <FiMoon className="inline h-5 w-5 mr-2 align-middle" /> : <FiSun className="inline h-5 w-5 mr-2 align-middle" />}
+                {theme === 'light' ? 'Dark' : 'Light'}
+              </button>
+            </div>
+            <div className="pt-2">
               <Link href="/products" className="block rounded-2xl bg-[#d6a757] py-3 text-center font-black text-[#102116]">
                 {shopNow}
               </Link>
