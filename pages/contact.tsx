@@ -1,17 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { FadeIn, StaggerGrid, StaggerItem } from '@/components/Motion';
 import { useAppStore } from '@/store';
 import { translations } from '@/lib/translations';
-import api from '@/lib/api';
+import api, { getAssetUrl } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi';
+
+interface ExportCountry {
+  _id: string;
+  name_en: string;
+  name_ar: string;
+  flag: string | null;
+  display_order: number;
+}
 
 const Contact = () => {
   const { language } = useAppStore();
   const t = translations[language];
   const page = t.contactPage;
   const [loading, setLoading] = useState(false);
+  const [countries, setCountries] = useState<ExportCountry[]>([]);
+
+  useEffect(() => {
+    api.get('/export-countries').then(r => setCountries(r.data || [])).catch(() => {});
+  }, []);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -61,6 +74,48 @@ const Contact = () => {
           </p>
         </FadeIn>
       </section>
+
+      {/* Export Countries */}
+      {countries.length > 0 && (
+        <section className="py-20 lg:py-28">
+          <FadeIn className="container mx-auto px-6">
+            <div className="text-center mb-14">
+              <span className="eyebrow mb-4 inline-flex">🌍 {t.exportCountries.title}</span>
+              <h2 className="text-3xl md:text-4xl font-black text-[#102116] leading-[0.95] tracking-tight">
+                {language === 'en' ? 'Where We Export' : 'أين نصدر'}
+              </h2>
+              <p className="mt-4 text-[#566359] max-w-xl mx-auto">
+                {t.exportCountries.subtitle}
+              </p>
+            </div>
+            <StaggerGrid className="flex flex-wrap justify-center gap-8">
+              {countries.map((country) => (
+                <StaggerItem key={country._id}>
+                  <div className="group flex flex-col items-center gap-3">
+                    <div className="w-24 h-16 rounded-xl overflow-hidden border border-[#102116]/10 shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-hover:shadow-[#d6a757]/20">
+                      {country.flag ? (
+                        <img
+                          src={getAssetUrl(country.flag)}
+                          alt={language === 'en' ? country.name_en : country.name_ar}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#102116]/5 flex items-center justify-center">
+                          <FiMapPin className="w-6 h-6 text-[#566359]" />
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-[#102116] text-center leading-tight">
+                      {language === 'en' ? country.name_en : country.name_ar}
+                    </span>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
+            <div className="mt-16 border-t border-[#102116]/10"></div>
+          </FadeIn>
+        </section>
+      )}
 
       {/* Main Content */}
       <section className="py-20 lg:py-32">

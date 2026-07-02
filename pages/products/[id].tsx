@@ -7,7 +7,7 @@ import { PageLoader } from '@/components/Loading';
 import { useAppStore } from '@/store';
 import { translations } from '@/lib/translations';
 import api, { getAssetUrl } from '@/lib/api';
-import { FiArrowLeft, FiTag, FiPackage } from 'react-icons/fi';
+import { FiArrowLeft, FiCheckCircle, FiShield, FiTruck, FiMapPin, FiLayers, FiDroplet, FiAward, FiCloud, FiArchive, FiClock, FiSend } from 'react-icons/fi';
 import { GetStaticProps, GetStaticPaths } from 'next';
 
 interface Product {
@@ -29,12 +29,32 @@ interface Product {
   sku?: string;
   stock?: number;
   is_featured?: boolean;
+  origin?: string;
+  form?: string;
+  color?: string;
+  purity?: string;
+  moisture?: string;
+  packaging?: string;
+  shelf_life?: string;
+  certifications?: string[];
+  export_availability?: string;
 }
 
 interface ProductDetailsProps {
   product: Product | null;
   suggestedProducts: Product[];
 }
+
+const specIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  origin: FiMapPin,
+  form: FiLayers,
+  color: FiDroplet,
+  purity: FiAward,
+  moisture: FiCloud,
+  packaging: FiArchive,
+  shelf_life: FiClock,
+  export_availability: FiSend,
+};
 
 const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSuggested }: ProductDetailsProps) => {
   const router = useRouter();
@@ -46,6 +66,22 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>(initialSuggested || []);
   const [loading, setLoading] = useState(!initialProduct);
   const [selectedImage, setSelectedImage] = useState<string | null>(initialProduct?.image || null);
+
+  interface ProductSpec {
+    label: string;
+    key: string;
+  }
+
+  const specFields: ProductSpec[] = [
+    { label: language === 'en' ? 'Origin' : 'بلد المنشأ', key: 'origin' },
+    { label: language === 'en' ? 'Form' : 'الشكل', key: 'form' },
+    { label: language === 'en' ? 'Color' : 'اللون', key: 'color' },
+    { label: language === 'en' ? 'Purity' : 'النقاء', key: 'purity' },
+    { label: language === 'en' ? 'Moisture' : 'الرطوبة', key: 'moisture' },
+    { label: language === 'en' ? 'Packaging' : 'التغليف', key: 'packaging' },
+    { label: language === 'en' ? 'Shelf Life' : 'مدة الصلاحية', key: 'shelf_life' },
+    { label: language === 'en' ? 'Export Availability' : 'التوفر للتصدير', key: 'export_availability' },
+  ];
 
   useEffect(() => {
     if (!initialProduct && id) {
@@ -114,35 +150,42 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
   const productName = language === 'en' ? product.name_en : product.name_ar;
   const productDesc = language === 'en' ? product.description_en : product.description_ar;
   const categoryName = language === 'en' ? product.category?.name_en : product.category?.name_ar;
+  const price = Number(product.price);
+  const hasPrice = price > 0;
 
   return (
     <Layout title={productName}>
-      {/* Back Button */}
-      <FadeIn className="py-6 border-b border-gray-200 bg-herba-light/30">
+      {/* Breadcrumb */}
+      <div className="bg-herba-light/30 border-b border-gray-200">
         <div className="container mx-auto px-6">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-herba-green hover:text-herba-dark font-semibold transition-colors"
-          >
-            <FiArrowLeft className="w-5 h-5" />
-            <span>{language === 'en' ? 'Back' : 'رجوع'}</span>
-          </button>
+          <div className="flex items-center gap-2 py-4 text-sm">
+            <button onClick={() => router.push('/')} className="text-gray-500 hover:text-herba-green transition-colors">
+              {language === 'en' ? 'Home' : 'الرئيسية'}
+            </button>
+            <span className="text-gray-300">/</span>
+            <button onClick={() => router.push('/products')} className="text-gray-500 hover:text-herba-green transition-colors">
+              {language === 'en' ? 'Products' : 'المنتجات'}
+            </button>
+            <span className="text-gray-300">/</span>
+            <span className="text-herba-dark font-semibold truncate max-w-[200px]">{productName}</span>
+          </div>
         </div>
-      </FadeIn>
+      </div>
 
       {/* Product Details Section */}
       <section className="py-12 lg:py-20 bg-white">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-24">
             {/* Image Section */}
-            <FadeIn className="flex flex-col">
+            <FadeIn className="lg:sticky lg:top-24 lg:self-start">
               {/* Main Image */}
-              <div className="mb-6 rounded-2xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 h-96 flex items-center justify-center">
+              <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-[4/3] flex items-center justify-center group">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent z-10 pointer-events-none" />
                 {selectedImage ? (
                   <img
                     src={getAssetUrl(selectedImage)}
                     alt={productName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-emerald-50 via-emerald-100 to-green-100 flex items-center justify-center">
@@ -152,16 +195,22 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
                     </div>
                   </div>
                 )}
+                {product.is_featured && (
+                  <div className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 bg-amber-400/90 text-amber-900 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
+                    <span>★</span>
+                    <span>{language === 'en' ? 'Featured' : 'مميز'}</span>
+                  </div>
+                )}
               </div>
 
               {/* Gallery Thumbnails */}
               {product.images && product.images.length > 0 && (
-                <div className="flex gap-3">
+                <div className="flex gap-3 mt-4">
                   <button
                     onClick={() => setSelectedImage(product.image)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                       selectedImage === product.image
-                        ? 'border-herba-green'
+                        ? 'border-herba-green ring-2 ring-herba-green/20'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -179,9 +228,9 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(img)}
-                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                         selectedImage === img
-                          ? 'border-herba-green'
+                          ? 'border-herba-green ring-2 ring-herba-green/20'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -194,86 +243,155 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
                   ))}
                 </div>
               )}
+
+              {/* Trust Badges */}
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                  <FiShield className="w-5 h-5 text-herba-green" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider text-center leading-tight">
+                    {language === 'en' ? 'Premium Quality' : 'جودة عالية'}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                  <FiCheckCircle className="w-5 h-5 text-herba-green" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider text-center leading-tight">
+                    {language === 'en' ? 'Certified' : 'معتمد'}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                  <FiTruck className="w-5 h-5 text-herba-green" />
+                  <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider text-center leading-tight">
+                    {language === 'en' ? 'Worldwide Ship' : 'شحن عالمي'}
+                  </span>
+                </div>
+              </div>
             </FadeIn>
 
             {/* Details Section */}
-            <FadeIn className="flex flex-col justify-center">
+            <FadeIn className="flex flex-col">
               {/* Category & Badge */}
-              <div className="mb-4 flex items-center gap-3">
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-herba-green bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-200">
-                  <FiTag className="w-4 h-4" />
+              <div className="mb-4 flex items-center gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-herba-green bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200">
                   {categoryName}
                 </span>
-                {product.is_featured && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-100 px-3 py-1.5 rounded-lg">
-                    <span>★</span>
-                    Featured
+                {hasPrice && (
+                  <span className="inline-flex items-center text-2xl font-black text-herba-dark">
+                    ${price.toFixed(2)}
+                    <span className="ml-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      / {language === 'en' ? 'kg' : 'كجم'}
+                    </span>
                   </span>
                 )}
               </div>
 
               {/* Product Name */}
-              <h1 className="text-4xl lg:text-5xl font-bold text-herba-dark mb-4 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-black text-herba-dark mb-4 leading-tight">
                 {productName}
               </h1>
 
               {/* Short Description */}
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed opacity-90">
-                {language === 'en' ? product.short_description_en : product.short_description_ar}
+              <p className="text-base text-gray-500 mb-8 leading-relaxed border-l-4 border-herba-green/30 pl-4 italic">
+                &ldquo;{language === 'en' ? product.short_description_en : product.short_description_ar}&rdquo;
               </p>
 
-              {/* Divider */}
-              <div className="w-12 h-1 bg-herba-green rounded-full mb-6"></div>
-
               {/* Full Description */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-herba-dark mb-3">
+              <div className="mb-10">
+                <h3 className="text-lg font-bold text-herba-dark mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-herba-green" />
                   {language === 'en' ? 'About this product' : 'عن هذا المنتج'}
                 </h3>
-                <p className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <p className="text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {productDesc}
                 </p>
               </div>
 
-              {/* Product Info */}
-              <div className="grid grid-cols-2 gap-4 mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                {product.sku && (
-                  <div>
-                    <span className="text-xs text-gray-500 uppercase font-semibold tracking-wider">SKU</span>
-                    <p className="text-lg font-bold text-gray-900">{product.sku}</p>
-                  </div>
-                )}
-                {product.stock !== undefined && (
-                  <div>
-                    <span className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Stock</span>
-                    <p className="text-lg font-bold text-gray-900">{product.stock}</p>
-                  </div>
-                )}
-                {product.price && (
-                  <div>
-                    <span className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Price</span>
-                    <p className="text-lg font-bold text-herba-green">${Number(product.price).toFixed(2)}</p>
-                  </div>
-                )}
+              {/* Product Specifications */}
+              <div className="mb-10">
+                <h3 className="text-lg font-bold text-herba-dark mb-4 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-herba-green" />
+                  {language === 'en' ? 'Specifications' : 'المواصفات'}
+                </h3>
+                <div className="rounded-2xl border border-gray-200 divide-y divide-gray-100">
+                  {specFields.map((field) => {
+                    const value = (product as any)[field.key];
+                    if (!value || (Array.isArray(value) && value.length === 0)) return null;
+                    return (
+                      <div key={field.key} className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                        <span className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                          <span className="flex items-center justify-center w-5 h-5 rounded-md bg-herba-green/10">
+                            {(() => {
+                              const Icon = specIcons[field.key];
+                              return Icon ? <Icon className="w-3.5 h-3.5 text-herba-green" /> : null;
+                            })()}
+                          </span>
+                          {field.label}
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 text-right">
+                          {value}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {product.certifications && product.certifications.length > 0 && (
+                    <div className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
+                      <span className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                        <span className="flex items-center justify-center w-5 h-5 rounded-md bg-herba-green/10">
+                          <FiCheckCircle className="w-3.5 h-3.5 text-herba-green" />
+                        </span>
+                        {language === 'en' ? 'Certifications' : 'الشهادات'}
+                      </span>
+                      <div className="flex flex-wrap gap-1.5 justify-end">
+                        {product.certifications.map((cert: string, i: number) => (
+                          <span key={i} className="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
+                            {cert}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Action Button */}
-              <button className="w-full py-4 px-6 bg-herba-green hover:bg-herba-dark text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                <FiPackage className="w-5 h-5" />
-                <span>{language === 'en' ? 'Request Quote' : 'طلب عرض سعر'}</span>
-              </button>
+              <a
+                href={(() => {
+                  const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201102737769';
+                  const msg = language === 'en'
+                    ? `Hello! I'm interested in ${productName}.%0A%0AProduct Details:%0A- Category: ${categoryName}%0A${hasPrice ? `- Price: $${price.toFixed(2)}/kg%0A` : ''}${product.origin ? `- Origin: ${product.origin}%0A` : ''}${product.form ? `- Form: ${product.form}%0A` : ''}${product.certifications?.length ? `- Certifications: ${product.certifications.join(', ')}` : ''}%0A%0ACould you please provide more details and pricing?`
+                    : `مرحباً، أنا مهتم بـ ${productName}.%0A%0Aتفاصيل المنتج:%0A- التصنيف: ${categoryName}%0A${hasPrice ? `- السعر: $${price.toFixed(2)}/كجم%0A` : ''}${product.origin ? `- بلد المنشأ: ${product.origin}%0A` : ''}${product.form ? `- الشكل: ${product.form}%0A` : ''}${product.certifications?.length ? `- الشهادات: ${product.certifications.join(', ')}` : ''}%0A%0Aهل يمكنكم تزويدي بمزيد من التفاصيل والأسعار؟`;
+                  return `https://wa.me/${phone}?text=${msg}`;
+                })()}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-4 px-6 bg-gradient-to-r from-herba-green to-emerald-700 hover:from-herba-dark hover:to-herba-dark text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+              >
+                <FiTruck className="w-5 h-5" />
+                <span>{language === 'en' ? 'Request a Quote' : 'طلب عرض سعر'}</span>
+              </a>
             </FadeIn>
           </div>
 
-          {/* Suggested Products Section */}
-          {suggestedProducts.length > 0 && (
-            <div className="pt-12 border-t border-gray-200">
-              <FadeIn className="mb-12">
-                <div className="flex items-center gap-3 mb-8">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-herba-dark">
+        </div>
+      </section>
+
+      {/* Suggested Products Section */}
+      {suggestedProducts.length > 0 && (
+        <section className="py-20 bg-herba-light/30 border-t border-gray-200">
+          <div className="container mx-auto px-6">
+            <div className="relative">
+              <FadeIn>
+                <div className="text-center mb-12">
+                  <span className="text-xs font-bold text-herba-green uppercase tracking-[0.2em]">
+                    {language === 'en' ? 'You might also like' : 'قد يعجبك أيضاً'}
+                  </span>
+                  <h2 className="text-3xl lg:text-4xl font-bold text-herba-dark mt-2">
                     {language === 'en' ? 'Related Products' : 'منتجات ذات صلة'}
                   </h2>
-                  <div className="flex-1 h-1 bg-gradient-to-r from-herba-green to-transparent rounded-full"></div>
+                  <p className="text-gray-500 text-sm mt-2 max-w-lg mx-auto">
+                    {language === 'en'
+                      ? `Explore more products in the ${categoryName} category`
+                      : `استكشف المزيد من المنتجات في فئة ${categoryName}`}
+                  </p>
                 </div>
 
                 <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -292,9 +410,9 @@ const ProductDetails = ({ product: initialProduct, suggestedProducts: initialSug
                 </StaggerGrid>
               </FadeIn>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
     </Layout>
   );
 };

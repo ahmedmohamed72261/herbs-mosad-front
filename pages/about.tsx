@@ -2,7 +2,7 @@ import Layout from '@/components/Layout';
 import { FadeIn, StaggerGrid, StaggerItem } from '@/components/Motion';
 import { useAppStore } from '@/store';
 import { translations } from '@/lib/translations';
-import { FiTarget, FiEye, FiHeart, FiAward, FiCheckCircle } from 'react-icons/fi';
+import { FiTarget, FiEye, FiHeart } from 'react-icons/fi';
 
 const About = () => {
   const { language } = useAppStore();
@@ -10,134 +10,179 @@ const About = () => {
   const page = t.aboutPage;
   const stats = page.stats;
 
-  const standards = language === 'en'
-    ? ['ISO 22000 Certified', 'HACCP Compliant', 'Organic Certified', 'Sortex Cleaned', 'Lab Tested', 'Traceable Supply']
-    : ['معتمد ISO 22000', 'متوافق مع HACCP', 'عضوي معتمد', 'مفرز آلياً', 'مختبر معملياً', 'سلسلة توريد قابلة للتتبع'];
-
   return (
     <Layout title={t.about.title}>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#0e2916] pt-40 pb-28 lg:pt-56 lg:pb-40">
-        <img src="/images/breadcrumb.jpg" alt="About us" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(214,167,87,0.28),transparent_32rem),radial-gradient(circle_at_20%_80%,rgba(45,106,79,0.4),transparent_28rem)]" />
-        <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.3\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
-        <FadeIn className="container mx-auto px-6 relative z-10 text-center">
-          <span className="eyebrow mb-6 inline-flex">🌿 {page.heroBadge}</span>
-          <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.95] tracking-tight">
+      <section className="bg-herba-dark pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
+        <img src="/images/breadcrumb.jpg" alt="About us" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #2d6a4f 0%, transparent 50%)' }}></div>
+        <FadeIn className="container mx-auto px-6 relative z-10 text-center text-white">
+          <div className="inline-flex items-center space-x-2 bg-white/10 rounded-full px-4 py-1.5 mb-6 text-sm text-green-300 font-medium border border-white/10">
+            <img src="/images/about.jpg" alt="About icon" className="w-5 h-5 rounded-full object-cover" />
+            {/* <span>🌿</span> */}
+            <span>{page.heroBadge}</span>
+          </div>
+          <h1 className="text-4xl lg:text-6xl font-bold mb-6">
             {t.about.title}
           </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-white/60">
+          <p className="text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
             {t.about.subtitle}
           </p>
         </FadeIn>
       </section>
 
-      {/* Story Section */}
-      <section className="py-20 lg:py-32">
+      <section className="py-20 lg:py-32 bg-herba-light">
         <div className="container mx-auto px-6">
-          <FadeIn className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-[2.5rem] shadow-[0_30px_90px_rgba(16,33,22,0.18)]">
-                <img src="/images/about.jpg" alt="About Organic Herbs Co" className="w-full h-[520px] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e2916]/60 via-transparent to-transparent" />
-              </div>
-              <div className="glass-panel absolute -bottom-6 -right-6 rounded-[2rem] p-5 shadow-xl max-w-[200px]">
-                <div className="text-3xl font-black text-[#d6a757]">30+</div>
-                <div className="text-sm font-bold text-[#566359] uppercase tracking-wider">
-                  {language === 'en' ? 'Years of Excellence' : 'سنوات من التميز'}
-                </div>
+          <FadeIn className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="lg:w-1/2">
+              <div className="relative w-full aspect-square bg-gradient-to-br from-herba-green to-herba-darker rounded-[3rem] flex items-center justify-center shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'repeating-radial-gradient(circle at 0 0, transparent 0, #0a1d0f 10px), repeating-linear-gradient(#2d6a4f55, #2d6a4f)' }}></div>
+                <span className="text-9xl relative z-10 text-white drop-shadow-2xl">🌿</span>
               </div>
             </div>
-            <div>
-              <span className="eyebrow mb-5 inline-flex">{page.storyBadge}</span>
-              <h2 className="text-4xl md:text-5xl font-black text-[#102116] leading-tight mb-6">
+            <div className="lg:w-1/2">
+              <div className="text-herba-green font-semibold text-sm mb-2 flex items-center space-x-2">
+                <span>🌿</span><span>{page.storyBadge}</span>
+              </div>
+              <h2 className="text-4xl font-bold text-herba-dark mb-6">
                 {page.storyTitle}
               </h2>
-              <p className="text-[#566359] leading-relaxed text-lg mb-5">
+              <p className="text-gray-600 mb-6 leading-relaxed text-lg">
                 {page.storyDescriptionOne}
               </p>
-              <p className="text-[#566359] leading-relaxed text-lg">
+              <p className="text-gray-600 leading-relaxed text-lg">
                 {page.storyDescriptionTwo}
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                {standards.slice(0, 3).map((s) => (
-                  <span key={s} className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2d6a4f] bg-[#2d6a4f]/10 px-3.5 py-2 rounded-full">
-                    <FiCheckCircle className="w-3.5 h-3.5" />
-                    {s}
-                  </span>
-                ))}
-              </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="relative overflow-hidden bg-[#0e2916] py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(214,167,87,0.12),transparent_28rem),radial-gradient(circle_at_80%_20%,rgba(45,106,79,0.2),transparent_26rem)]" />
+      {/* Why Choose Us Article */}
+      <section className="py-20 lg:py-28 bg-herba-light">
+        <FadeIn className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-14">
+            <span className="text-herba-green font-semibold text-sm mb-2 flex items-center justify-center space-x-2">
+              <span>🌿</span><span>Why Us</span>
+            </span>
+            <h2 className="text-4xl font-bold text-herba-dark">
+              {page.whyChooseUsTitle}
+            </h2>
+          </div>
+
+          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed whitespace-pre-line mb-12">
+            {page.whyChooseUsIntro}
+          </div>
+
+          {page.whyChooseUsSections.map((section, i) => (
+            <div key={i} className="mb-12 last:mb-0">
+              <h3 className="text-2xl font-bold text-herba-dark mb-4 flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-herba-green/10 text-herba-green flex items-center justify-center text-sm font-black shrink-0">
+                  {i + 1}
+                </span>
+                {section.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                {section.body}
+              </p>
+
+              {i === 1 && (
+                <ul className="mt-6 space-y-3">
+                  {page.certifications.map((cert, j) => (
+                    <li key={j} className="flex items-start gap-3 text-gray-600">
+                      <span className="w-6 h-6 rounded-full bg-herba-green/10 text-herba-green flex items-center justify-center text-xs font-black shrink-0 mt-0.5">✓</span>
+                      <span>{cert}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {i === 4 && (
+                <ul className="mt-6 space-y-3">
+                  {page.customizedSolutions.map((sol, j) => (
+                    <li key={j} className="flex items-start gap-3 text-gray-600">
+                      <span className="w-6 h-6 rounded-full bg-herba-yellow/20 text-herba-yellow-darker flex items-center justify-center text-xs font-black shrink-0 mt-0.5">→</span>
+                      <span>{sol}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+
+          <div className="mt-16 p-8 bg-herba-dark text-white rounded-[2rem] shadow-xl text-center">
+            <p className="text-xl leading-relaxed font-medium">
+              {page.whyChooseUsCta}
+            </p>
+            <p className="text-herba-yellow font-bold text-sm mt-6 tracking-widest uppercase">
+              Organic Herbs Co
+            </p>
+          </div>
+        </FadeIn>
+      </section>
+
+      <section className="py-20 bg-herba-dark text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #2d6a4f 0%, transparent 70%)' }}></div>
         <div className="container mx-auto px-6 relative z-10">
-          <StaggerGrid className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+          <FadeIn className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
             {stats.map((stat, index) => (
-              <StaggerItem key={index}>
-                <div className="text-center">
-                  <div className="text-5xl lg:text-6xl font-black text-[#d6a757] mb-3 drop-shadow-lg">
-                    {stat.number}
-                  </div>
-                  <div className="text-sm font-bold text-white/60 uppercase tracking-widest">
-                    {stat.label}
-                  </div>
+              <div key={index}>
+                <div className="text-5xl lg:text-6xl font-bold text-herba-yellow mb-4 drop-shadow-lg">
+                  {stat.number}
                 </div>
-              </StaggerItem>
+                <div className="text-white/80 font-medium text-lg uppercase tracking-wider">
+                  {stat.label}
+                </div>
+              </div>
             ))}
-          </StaggerGrid>
+          </FadeIn>
         </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-20 lg:py-32">
+      <section className="py-20 lg:py-32 bg-white">
         <FadeIn className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="eyebrow mb-5 inline-flex">{page.philosophyBadge}</span>
-            <h2 className="text-4xl md:text-5xl font-black text-[#102116] max-w-2xl mx-auto leading-tight">
-              {page.philosophyTitle}
-            </h2>
+            <div className="text-herba-green font-semibold text-sm mb-2 flex items-center justify-center space-x-2">
+              <span>🌿</span><span>{page.philosophyBadge}</span>
+            </div>
+            <h2 className="text-4xl font-bold text-herba-dark">{page.philosophyTitle}</h2>
           </div>
           <StaggerGrid className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <StaggerItem>
-              <div className="glass-panel p-10 rounded-[2rem] h-full group hover:-translate-y-1.5 transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-[#102116] text-[#d6a757] flex items-center justify-center mb-6 group-hover:rotate-3 transition-transform">
+              <div className="bg-herba-light p-10 rounded-[2rem] hover:shadow-xl transition-shadow group border border-transparent hover:border-gray-100">
+                <div className="w-16 h-16 bg-white rounded-2xl text-herba-green mb-6 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                   <FiTarget className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-black text-[#102116] mb-4">
+                <h3 className="text-2xl font-bold text-herba-dark mb-4">
                   {t.about.mission}
                 </h3>
-                <p className="text-[#566359] leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   {page.missionDescription}
                 </p>
               </div>
             </StaggerItem>
             <StaggerItem>
-              <div className="glass-panel p-10 rounded-[2rem] h-full group hover:-translate-y-1.5 transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-[#102116] text-[#d6a757] flex items-center justify-center mb-6 group-hover:rotate-3 transition-transform">
+              <div className="bg-herba-light p-10 rounded-[2rem] hover:shadow-xl transition-shadow group border border-transparent hover:border-gray-100">
+                <div className="w-16 h-16 bg-white rounded-2xl text-herba-green mb-6 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                   <FiEye className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-black text-[#102116] mb-4">
+                <h3 className="text-2xl font-bold text-herba-dark mb-4">
                   {t.about.vision}
                 </h3>
-                <p className="text-[#566359] leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   {page.visionDescription}
                 </p>
               </div>
             </StaggerItem>
             <StaggerItem>
-              <div className="glass-panel p-10 rounded-[2rem] h-full group hover:-translate-y-1.5 transition-all duration-500">
-                <div className="w-16 h-16 rounded-2xl bg-[#102116] text-[#d6a757] flex items-center justify-center mb-6 group-hover:rotate-3 transition-transform">
+              <div className="bg-herba-light p-10 rounded-[2rem] hover:shadow-xl transition-shadow group border border-transparent hover:border-gray-100">
+                <div className="w-16 h-16 bg-white rounded-2xl text-herba-green mb-6 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                   <FiHeart className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-black text-[#102116] mb-4">
+                <h3 className="text-2xl font-bold text-herba-dark mb-4">
                   {page.valuesTitle}
                 </h3>
-                <p className="text-[#566359] leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   {page.valuesDescription}
                 </p>
               </div>
@@ -146,27 +191,6 @@ const About = () => {
         </FadeIn>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative overflow-hidden bg-[#0e2916] py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(214,167,87,0.18),transparent_30rem),radial-gradient(circle_at_30%_70%,rgba(45,106,79,0.25),transparent_28rem)]" />
-        <FadeIn className="container mx-auto px-6 relative z-10 text-center">
-          <FiAward className="w-12 h-12 text-[#d6a757] mx-auto mb-6" />
-          <h2 className="text-4xl md:text-5xl font-black text-white max-w-3xl mx-auto leading-tight">
-            {language === 'en' ? 'Ready to Partner with Us?' : 'هل أنت مستعد للشراكة معنا؟'}
-          </h2>
-          <p className="mt-5 text-lg text-white/60 max-w-xl mx-auto">
-            {language === 'en' ? 'Let\'s discuss how our premium botanical ingredients can elevate your products.' : 'دعنا نناقش كيف يمكن لمكوناتنا النباتية الممتازة أن ترتقي بمنتجاتك.'}
-          </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-4">
-            <a href="/contact" className="btn-primary">
-              {language === 'en' ? 'Contact Us' : 'اتصل بنا'}
-            </a>
-            <a href="/products" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3 text-sm font-bold text-white backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/20">
-              {language === 'en' ? 'Browse Products' : 'تصفح المنتجات'}
-            </a>
-          </div>
-        </FadeIn>
-      </section>
     </Layout>
   );
 };

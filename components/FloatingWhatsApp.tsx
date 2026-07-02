@@ -2,11 +2,13 @@ import { motion } from 'motion/react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useAppStore } from '@/store';
 
-const WHATSAPP_PHONE = '1234567890';
-const WHATSAPP_MESSAGE = 'Hello! I would like more information about your herbs and spices.';
+const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '201102737769';
 
 export default function FloatingWhatsApp() {
   const { language } = useAppStore();
+  const WHATSAPP_MESSAGE = language === 'en'
+    ? 'Hello Organic Herbs Co., I am interested in your premium herbs and spices products. Could you please share your catalog and wholesale pricing? Thank you.'
+    : 'مرحباً شركة الأعشاب العضوية، أنا مهتم بمنتجاتكم الممتازة من الأعشاب والتوابل. هل يمكنكم مشاركة كتالوج المنتجات وأسعار الجملة؟ شكراً لكم.';
   const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
   const positionClass = language === 'ar' ? 'left-8' : 'right-8';
 
