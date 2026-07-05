@@ -26,6 +26,7 @@ const Navbar = () => {
     { href: '/certificates', label: t.nav.certificates},
     { href: '/catalog', label: t.nav.catalog },
     { href: '/team', label: t.nav.team },
+    { href: '/export', label: t.nav.export },
     { href: '/contact', label: t.nav.contact },
   ];
 
@@ -47,7 +48,7 @@ const Navbar = () => {
       className="fixed left-0 right-0 top-0 z-50 px-4 py-4 transition-all duration-300 md:px-8"
     >
       <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between rounded-full border px-5 py-3 backdrop-blur-2xl transition-all duration-300 ${
+        className={`mx-auto flex max-w-[90rem] items-center justify-between rounded-full border px-6 py-3 backdrop-blur-2xl transition-all duration-300 ${
           isScrolled
             ? 'border-white/35 bg-[#102116]/85 shadow-[0_18px_55px_rgba(16,33,22,0.24)]'
             : 'border-white/25 bg-[#102116]/35'

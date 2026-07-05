@@ -14,6 +14,7 @@ export const translations = {
       certificates: 'Certificates',
       contact: 'Contact Us',
       catalog: 'Catalog',
+      export: 'Export',
     },
     team: {
       title: 'Our Team',
@@ -294,6 +295,7 @@ export const translations = {
       certificates: 'الشهادات',
       contact: 'اتصل بنا',
       catalog: 'الكتالوج',
+      export: 'التصدير',
     },
     team: {
       title: 'فريقنا',
